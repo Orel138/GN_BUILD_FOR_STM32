@@ -1,0 +1,161 @@
+import("//build_overrides/root.gni")
+
+print("")
+
+HAL_dir = "${root_src_dir}/Drivers/STM32WBxx_HAL_Driver"
+CMSIS_dir = "${root_src_dir}/Drivers/CMSIS"
+
+# Define the target name
+executable_target_name = "Blink_LED"
+
+declare_args() {
+  
+}
+
+  optimization = "-Og"
+
+  arm_cpu = "cortex-m4"
+  arm_fpu = "fpv4-sp-d16"
+  arm_float_abi = "hard"
+
+#   arm_arch = "armv7e-m"
+#   arm_abi = "aapcs"
+  
+config("${executable_target_name}_config") {
+  include_dirs = [
+    "Inc/",
+    "${HAL_dir}/Inc",
+    "${HAL_dir}/Inc/Legacy",
+    "${CMSIS_dir}/Device/ST/STM32WBxx/Include",
+    "${CMSIS_dir}/Include",
+  ]
+
+  defines = [
+  "USE_HAL_DRIVER",
+  "STM32WB55xx",
+  ]
+
+  # Set the compiler flags
+  cflags = [
+    "-mcpu=${arm_cpu}",
+    "-mthumb",
+    "-mfpu=${arm_fpu}",
+    "-mfloat-abi=${arm_float_abi}",
+    "${optimization}",
+    "-Wall",
+    "-fdata-sections",
+    "-ffunction-sections",
+    # "-fno-exceptions",
+    #"-fno-rtti",
+    #"-fno-threadsafe-statics",
+    # "-Wno-error=unused-parameter"
+  ]
+}
+
+
+source_set("hal") {
+  sources = [
+    "${HAL_dir}/Src/stm32wbxx_hal_tim.c",
+    "${HAL_dir}/Src/stm32wbxx_hal_tim_ex.c",
+    "${HAL_dir}/Src/stm32wbxx_hal_uart.c",
+    "${HAL_dir}/Src/stm32wbxx_hal_uart_ex.c",
+    "${HAL_dir}/Src/stm32wbxx_hal_rcc.c",
+    "${HAL_dir}/Src/stm32wbxx_ll_rcc.c",
+    "${HAL_dir}/Src/stm32wbxx_hal_rcc_ex.c",
+    "${HAL_dir}/Src/stm32wbxx_hal_flash.c",
+    "${HAL_dir}/Src/stm32wbxx_hal_flash_ex.c",
+    "${HAL_dir}/Src/stm32wbxx_hal_gpio.c",
+    "${HAL_dir}/Src/stm32wbxx_hal_hsem.c",
+    "${HAL_dir}/Src/stm32wbxx_hal_dma.c",
+    "${HAL_dir}/Src/stm32wbxx_hal_dma_ex.c",
+    "${HAL_dir}/Src/stm32wbxx_hal_pwr.c",
+    "${HAL_dir}/Src/stm32wbxx_hal_pwr_ex.c",
+    "${HAL_dir}/Src/stm32wbxx_hal_cortex.c",
+    "${HAL_dir}/Src/stm32wbxx_hal.c",
+    "${HAL_dir}/Src/stm32wbxx_hal_exti.c",
+    "${HAL_dir}/Src/stm32wbxx_hal_pcd.c",
+    "${HAL_dir}/Src/stm32wbxx_hal_pcd_ex.c",
+    "${HAL_dir}/Src/stm32wbxx_ll_usb.c",
+  ]
+
+  public_configs = [
+    ":${executable_target_name}_config"
+  ]
+}
+
+
+# Define the target
+executable("${executable_target_name}") {
+
+  include_dirs = [
+    "Inc/",
+    "${HAL_dir}/Inc",
+    "${HAL_dir}/Inc/Legacy",
+    "Drivers/CMSIS/Device/ST/STM32WBxx/Include",
+    "Drivers/CMSIS/Include",
+  ]
+
+  # Add the C++ source files to the target
+  sources = [
+    "Src/main.c",
+    "Src/stm32wbxx_it.c",
+    "Src/stm32wbxx_hal_msp.c",
+    "Src/system_stm32wbxx.c",
+  ]
+  
+  # Add the startup file to the target
+  sources += [
+    "startup_stm32wb55xx_cm4.s"
+  ]
+
+  ldscript = "stm32wb55xx_flash_cm4.ld"
+
+  inputs = [ ldscript ]
+
+  # Add the linker script file to the target
+  ldflags = [
+    "-T" + rebase_path(ldscript, root_build_dir),
+    # other linker flags ...
+    "-mcpu=${arm_cpu}",
+    "-mthumb",
+    "-mfpu=${arm_fpu}",
+    "-mfloat-abi=${arm_float_abi}",
+    "-specs=nano.specs",
+    "-lc",
+    "-lm",
+    "-lnosys",
+
+    "-Wl,--gc-sections",
+    "-static",
+    "-mfpu=fpv5-d16",
+    "-mfloat-abi=hard",
+    "-mthumb",
+    "-Wl,--start-group",
+    "-lstdc++",
+    "-lsupc++",
+    "-Wl,--end-group",
+  ]
+
+  # Add the STM32 library files to the target
+  libs = [
+
+  ]
+
+  defines = [
+  "USE_HAL_DRIVER",
+  "STM32WB55xx",
+  ]
+
+  # Set the compiler flags
+  cflags = []
+
+  public_deps = [
+    ":hal"
+  ]
+
+  public_configs = [
+    ":${executable_target_name}_config"
+  ]
+}
+
+# Define any additional targets here

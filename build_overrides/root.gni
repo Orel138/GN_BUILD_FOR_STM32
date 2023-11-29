@@ -1,0 +1,4 @@
+declare_args() {
+  # Root directory.
+  root_src_dir = "//"
+}

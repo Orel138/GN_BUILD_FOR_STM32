@@ -1,0 +1,56 @@
+toolchain("gcc") {
+  tool("cc") {
+    depfile = "{{output}}.d"
+    command = "arm-none-eabi-gcc -MMD -MF $depfile {{defines}} {{include_dirs}} {{cflags}} {{cflags_c}} -c {{source}} -o {{output}}"
+    depsformat = "gcc"
+    description = "CC {{output}}"
+    outputs = [
+      "{{source_out_dir}}/{{target_output_name}}.{{source_name_part}}.o",
+    ]
+  }
+  tool("cxx") {
+    depfile = "{{output}}.d"
+    command = "arm-none-eabi-g++ -MMD -MF $depfile {{defines}} {{include_dirs}} {{cflags}} {{cflags_cc}} -c {{source}} -o {{output}}"
+    depsformat = "gcc"
+    description = "CXX {{output}}"
+    outputs = [
+      "{{source_out_dir}}/{{target_output_name}}.{{source_name_part}}.o",
+    ]
+  }
+  tool("asm") {
+    command = "arm-none-eabi-gcc {{cflags}} {{cflags_cc}} -c -x assembler-with-cpp -MMD -MP -MF{source}.d -MT{source}.o --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o {{output}} {{source}}"
+    description = "ASM"
+    outputs = [
+      "{{source_out_dir}}/{{source_name_part}}.o",
+    ]
+  }
+  tool("alink") {
+    rspfile = "{{output}}.rsp"
+    command = "rm -f {{output}} && ar rcs {{output}} @$rspfile"
+    description = "AR {{target_output_name}}{{output_extension}}"
+    rspfile_content = "{{inputs}}"
+    outputs = [
+      "{{target_out_dir}}/{{target_output_name}}{{output_extension}}",
+    ]
+    default_output_extension = ".a"
+    output_prefix = "lib"
+  }
+  tool("link") {
+    outfile = "{{target_output_name}}{{output_extension}}"
+    rspfile = "$outfile.rsp"
+    command = "arm-none-eabi-g++ {{ldflags}} -o $outfile.elf -Wl,--start-group @$rspfile {{solibs}} -Wl,--end-group {{libs}}"
+    description = "LINK $outfile"
+    rspfile_content = "{{inputs}}"
+    outputs = [
+      outfile,
+    ]
+  }
+  tool("stamp") {
+    command = "touch {{output}}"
+    description = "STAMP {{output}}"
+  }
+  tool("copy") {
+    command = "cp -af {{source}} {{output}}"
+    description = "COPY {{source}} {{output}}"
+  }
+}

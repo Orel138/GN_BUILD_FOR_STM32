@@ -1,0 +1,12 @@
+import("//build_overrides/root.gni")
+import("//build_overrides/build.gni")
+
+# The location of the build configuration file.
+buildconfig = "${build_root}/config/BUILDCONFIG.gn"
+
+default_args = {
+#   target_cpu = "arm"
+#   target_os = "freertos"
+
+  import("//args.gni")
+}

@@ -1,0 +1,4 @@
+declare_args() {
+  # Root directory for build files.
+  build_root = "//build_GN/GN_ROOT/build"
+}

@@ -1,0 +1,28 @@
+declare_args() {
+  
+}
+
+if (target_os == "") {
+  target_os = host_os
+}
+
+if (target_cpu == "") {
+  target_cpu = host_cpu
+}
+
+if (current_cpu == "") {
+  current_cpu = target_cpu
+}
+if (current_os == "") {
+  current_os = target_os
+}
+
+_build_overrides = {
+  import("//build_overrides/build.gni")
+}
+
+_default_toolchain = "${_build_overrides.build_root}/toolchains:gcc"
+
+set_default_toolchain(_default_toolchain)
+
+cflags_cc = ["-std=c++11"]
