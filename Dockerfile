@@ -53,8 +53,14 @@ RUN set -x \
     && : # last line
 
 
-# Set the working directory (optional)
-WORKDIR /gn-test-workdir
+# Copy project to container
+COPY . /app
+
+# Set script permissions
+RUN chmod +x /app/scripts/run_test.sh
+
+# Set working directory
+WORKDIR /app
 
 # Default command when container starts
 CMD ["bash"]
