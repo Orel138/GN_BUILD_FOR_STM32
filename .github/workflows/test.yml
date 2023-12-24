@@ -15,6 +15,9 @@ jobs:
       - name: Build the Docker Image
         run: docker build -t my-test-image -f Dockerfile .
 
+      - name: Set script permissions
+        run: chmod +x ./scripts/run_test.sh
+
       - name: Run Tests
         run: ./scripts/run_test.sh Projects/NUCLEO-WB55RG/Examples/Blink_LED
   
