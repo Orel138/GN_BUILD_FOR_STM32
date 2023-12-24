@@ -16,7 +16,4 @@ jobs:
         run: docker build -t my-test-image -f Dockerfile .
 
       - name: Run Tests inside Docker Container
-        run: |
-          docker run my-test-image
-          chmod +x ./scripts/run_test.sh
-          docker run --rm my-test-image ./scripts/run_test.sh Projects/NUCLEO-WB55RG/Examples/Blink_LED
+      run: docker run --rm my-test-image sh -c "chmod +x ./scripts/run_test.sh && ./scripts/run_test.sh Projects/NUCLEO-WB55RG/Examples/Blink_LED"
