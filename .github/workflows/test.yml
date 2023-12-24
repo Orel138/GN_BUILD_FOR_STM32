@@ -17,7 +17,6 @@ jobs:
 
       - name: Run Tests inside Docker Container
         run: |
-          docker run --rm my-test-image chmod +x ./scripts/run_test.sh
+          docker run -it my-test-image
+          chmod +x ./scripts/run_test.sh
           docker run --rm my-test-image ./scripts/run_test.sh Projects/NUCLEO-WB55RG/Examples/Blink_LED
-  
-
