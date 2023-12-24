@@ -52,6 +52,9 @@ RUN set -x \
     && rm -rf gn \
     && : # last line
 
+# git Clone the project
+RUN git clone https://github.com/Orel138/GN_BUILD_FOR_STM32.git app
+
 # Set working directory
 WORKDIR /app
 
