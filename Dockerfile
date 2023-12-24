@@ -52,13 +52,6 @@ RUN set -x \
     && rm -rf gn \
     && : # last line
 
-
-# Copy project to container
-COPY . /app
-
-# Set script permissions
-RUN chmod +x /app/scripts/run_test.sh
-
 # Set working directory
 WORKDIR /app
 
