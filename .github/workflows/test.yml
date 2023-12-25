@@ -1,4 +1,4 @@
-name: Build example - STM32WB55
+name: tests
 
 on: [push]
 
